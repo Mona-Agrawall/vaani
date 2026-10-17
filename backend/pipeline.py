@@ -81,6 +81,26 @@ MAX_TEMPO = 2.0             # the most a sentence is sped up to fit before the n
 TTS_WORKERS = 4
 CAPTION_LINE = 42           # subtitle line width; each subtitle has at most two lines
 
+# Font for burned-in subtitles. Naming the script's own font matters: when libass has to fall back
+# character by character it can mix fonts within a word (e.g. Tamil letters from Noto Sans Grantha),
+# which breaks the shaping. These are the Noto fonts the Docker image installs; where one is missing
+# (e.g. on Windows) libass falls back to a system font that covers the script.
+DEFAULT_SUBTITLE_FONT = "Arial"
+SUBTITLE_FONTS = {
+    "hi": "Noto Sans Devanagari",
+    "mr": "Noto Sans Devanagari",
+    "bn": "Noto Sans Bengali",
+    "ta": "Noto Sans Tamil",
+    "te": "Noto Sans Telugu",
+    "gu": "Noto Sans Gujarati",
+    "kn": "Noto Sans Kannada",
+    "ml": "Noto Sans Malayalam",
+    "ur": "Noto Naskh Arabic",
+    "ar": "Noto Naskh Arabic",
+    "ja": "Noto Sans CJK JP",
+    "ko": "Noto Sans CJK KR",
+}
+
 ASS_HEADER = """[Script Info]
 ScriptType: v4.00+
 PlayResX: 384
@@ -90,7 +110,7 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Default,Arial,18,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,0,0,0,0,100,100,0,0,1,1.3,0,2,20,20,20,1
+Style: Default,{font},18,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,0,0,0,0,100,100,0,0,1,1.3,0,2,20,20,20,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -412,13 +432,14 @@ def _ass_text(text):
     return re.sub(r"[{}\\]", "", text).replace("\n", r"\N")
 
 
-def _ass(cues):
+def _ass(cues, lang=None):
     def stamp(seconds):
         cs = round(seconds * 100)
         return f"{cs // 360000}:{cs // 6000 % 60:02}:{cs // 100 % 60:02}.{cs % 100:02}"
     events = (f"Dialogue: 0,{stamp(start)},{stamp(end)},Default,,0,0,0,,{_ass_text(text)}"
               for start, end, text in cues)
-    return ASS_HEADER + "\n".join(events) + "\n"
+    header = ASS_HEADER.replace("{font}", SUBTITLE_FONTS.get(lang, DEFAULT_SUBTITLE_FONT))
+    return header + "\n".join(events) + "\n"
 
 
 # ── steps ────────────────────────────────────────────────
@@ -566,7 +587,7 @@ def synthesize(job, lang, gender="female"):
     cues = _captions(spoken)
     _write(job, SUBTITLES, _srt(cues))
     _write(job, SUBTITLES_VTT, _vtt(cues))
-    _write(job, SUBTITLES_ASS, _ass(cues))
+    _write(job, SUBTITLES_ASS, _ass(cues, lang))
     return voice
 
 

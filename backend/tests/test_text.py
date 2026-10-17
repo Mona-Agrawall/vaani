@@ -131,6 +131,11 @@ def test_srt_and_vtt_formats():
     assert p._vtt(cues).startswith("WEBVTT\n\n1\n00:00:01.500 --> 00:00:03.250\nHello\n")
 
 
+def test_ass_style_uses_the_scripts_own_font():
+    assert "Style: Default,Noto Sans Tamil,18," in p._ass([], "ta")
+    assert "Style: Default,Arial,18," in p._ass([], "fr")
+
+
 def test_ass_events_escape_override_codes_and_break_lines():
     ass = p._ass([(0.0, 1.0, "a {\\b1}bold\\ word\nnext")])
     assert ass.endswith("Dialogue: 0,0:00:00.00,0:00:01.00,Default,,0,0,0,,a b1bold word\\Nnext\n")
