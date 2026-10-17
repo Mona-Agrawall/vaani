@@ -1,0 +1,14 @@
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI declares request parameters with calls in defaults, e.g. File(...)
+extend-immutable-calls = ["fastapi.File"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["integration: runs FFmpeg on real media (slower, still offline)"]

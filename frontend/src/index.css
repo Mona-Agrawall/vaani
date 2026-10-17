@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Color tokens as RGB channels so Tailwind opacity modifiers (bg-danger/10) work */
+:root {
+  color-scheme: light;
+  --bg: 247 246 243;
+  --surface: 255 255 255;
+  --sunken: 241 239 234;
+  --line: 228 225 218;
+  --fg: 28 27 25;
+  --muted: 107 104 98;
+  --faint: 154 150 142;
+  --accent: 217 72 15;
+  --success: 47 125 79;
+  --danger: 180 35 24;
+  --ink: 28 27 25;
+  --on-ink: 255 255 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: 20 20 19;
+    --surface: 28 27 26;
+    --sunken: 36 35 33;
+    --line: 51 49 46;
+    --fg: 237 235 230;
+    --muted: 161 157 149;
+    --faint: 111 107 100;
+    --accent: 247 103 7;
+    --success: 76 175 122;
+    --danger: 240 82 70;
+    --ink: 237 235 230;
+    --on-ink: 20 20 19;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: 20 20 19;
+  --surface: 28 27 26;
+  --sunken: 36 35 33;
+  --line: 51 49 46;
+  --fg: 237 235 230;
+  --muted: 161 157 149;
+  --faint: 111 107 100;
+  --accent: 247 103 7;
+  --success: 76 175 122;
+  --danger: 240 82 70;
+  --ink: 237 235 230;
+  --on-ink: 20 20 19;
+}
+
+@layer base {
+  body {
+    @apply bg-bg text-fg font-sans antialiased;
+  }
+
+  ::selection {
+    @apply bg-accent/20;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent/60 ring-offset-2 ring-offset-bg;
+  }
+}

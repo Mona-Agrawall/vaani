@@ -1,0 +1,19 @@
+services:
+  backend:
+    build: ./backend
+    volumes:
+      - jobs:/app/jobs               # uploaded videos and results (deleted after 24 hours)
+      - models:/home/app/.cache      # Whisper and Demucs models, downloaded on first use
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  jobs:
+  models:
