@@ -50,3 +50,5 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build images
         run: docker compose build
+      - name: Build Hugging Face Spaces image
+        run: docker build .

@@ -1,3 +1,13 @@
+---
+title: Vaani
+emoji: 🎙️
+colorFrom: indigo
+colorTo: purple
+sdk: docker
+app_port: 7860
+short_description: Dub a video into another language
+---
+
 # Vaani
 
 Vaani dubs a video into another language. Upload an MP4 and it transcribes the speech, translates
@@ -458,6 +468,27 @@ cd frontend
 npm run build      # outputs frontend/dist
 npm run preview    # serves the build on :3000 with the same /api proxy
 ```
+
+### Deploying to Hugging Face Spaces
+
+The `Dockerfile` at the repository root builds a single image for a
+[Docker Space](https://huggingface.co/docs/hub/spaces-sdks-docker). FastAPI serves both the API and
+the built frontend on port 7860, and the Whisper and Demucs models are baked into the image. The
+Space settings are in the block at the top of this README. The free CPU tier (2 vCPU, 16 GB) is
+enough.
+
+1. Create a Space at <https://huggingface.co/new-space> and choose **Docker** with the
+   **Blank** template.
+2. Log in with a token that has write access: `hf auth login`.
+3. Push this repository to the Space:
+
+   ```bash
+   git remote add space https://huggingface.co/spaces/<user>/<space>
+   git push space main
+   ```
+
+The Space builds itself, which takes about 10 minutes. Its disk is wiped whenever it restarts or
+goes to sleep, so jobs in progress are lost then.
 
 ---
 

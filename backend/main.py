@@ -9,6 +9,7 @@ from typing import Annotated, Literal
 
 from fastapi import APIRouter, FastAPI, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 import pipeline
@@ -168,3 +169,8 @@ def subtitles(video_id: str, format: Literal["srt", "vtt"] = "srt", filename: st
 
 app = FastAPI(title="Vaani")
 app.include_router(api)
+
+# In the single-container image (Hugging Face Spaces) the server also serves the built frontend.
+# Mounted last, so /api routes take precedence.
+if os.environ.get("FRONTEND_DIR"):
+    app.mount("/", StaticFiles(directory=os.environ["FRONTEND_DIR"], html=True), name="frontend")
