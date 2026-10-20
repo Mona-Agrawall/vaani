@@ -1,13 +1,3 @@
----
-title: Vaani
-emoji: 🎙️
-colorFrom: indigo
-colorTo: purple
-sdk: docker
-app_port: 7860
-short_description: Dub a video into another language
----
-
 # Vaani
 
 Vaani dubs a video into another language. Upload an MP4 and it transcribes the speech, translates
